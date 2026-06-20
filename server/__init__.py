@@ -5,6 +5,7 @@ from .routes import main_bp
 
 
 def create_app():
+    init_db()
     app = Flask(__name__)
     app.register_blueprint(main_bp)
     return app

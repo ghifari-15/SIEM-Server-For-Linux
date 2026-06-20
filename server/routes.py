@@ -187,6 +187,7 @@ def csv_response(csv_data, filename):
 
 
 def write_report(filename, content):
+    os.makedirs(REPORT_DIR, exist_ok=True)
     with open(os.path.join(REPORT_DIR, filename), "w") as f:
         f.write(content)
 
