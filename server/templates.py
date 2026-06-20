@@ -6,6 +6,8 @@ body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f4; }
 .nav a { margin-right: 15px; text-decoration: none; color: #0056b3; }
 .cards { display: flex; gap: 15px; margin-bottom: 25px; }
 .card { background: white; padding: 20px; border-radius: 8px; min-width: 180px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+form { background: white; padding: 15px; margin-bottom: 20px; }
+input, select, button { padding: 8px; margin-right: 8px; }
 table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 30px; }
 th, td { padding: 10px; border: 1px solid #ccc; font-size: 14px; }
 th { background: #222; color: white; }
@@ -21,6 +23,26 @@ th { background: #222; color: white; }
     <a href="/report/summary">Report Summary</a>
 </div>
 <hr>
+<form method="GET" action="/dashboard">
+    <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
+    <select name="event_type">
+        <option value="">All Event Types</option>
+        <option value="failed_ssh" {% if event_type == 'failed_ssh' %}selected{% endif %}>failed_ssh</option>
+        <option value="successful_ssh" {% if event_type == 'successful_ssh' %}selected{% endif %}>successful_ssh</option>
+        <option value="failed_sudo" {% if event_type == 'failed_sudo' %}selected{% endif %}>failed_sudo</option>
+        <option value="user_account" {% if event_type == 'user_account' %}selected{% endif %}>user_account</option>
+        <option value="file_operation" {% if event_type == 'file_operation' %}selected{% endif %}>file_operation</option>
+        <option value="service_or_custom_log" {% if event_type == 'service_or_custom_log' %}selected{% endif %}>service_or_custom_log</option>
+    </select>
+    <select name="severity">
+        <option value="">All Severity</option>
+        <option value="low" {% if severity == 'low' %}selected{% endif %}>low</option>
+        <option value="medium" {% if severity == 'medium' %}selected{% endif %}>medium</option>
+        <option value="high" {% if severity == 'high' %}selected{% endif %}>high</option>
+    </select>
+    <button type="submit">Filter</button>
+    <a href="/dashboard">Reset</a>
+</form>
 <div class="cards">
     <div class="card"><h3>Total Events</h3><h2>{{ total_events }}</h2></div>
     <div class="card"><h3>Total Alerts</h3><h2>{{ total_alerts }}</h2></div>
@@ -65,9 +87,14 @@ th { background: #222; color: white; }
     <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
     <select name="event_type">
         <option value="">All Event Types</option>
+        <option value="failed_ssh">failed_ssh</option>
+        <option value="successful_ssh">successful_ssh</option>
+        <option value="failed_sudo">failed_sudo</option>
+        <option value="user_account">user_account</option>
+        <option value="file_operation">file_operation</option>
+        <option value="service_or_custom_log">service_or_custom_log</option>
         <option value="failed_ssh_login">failed_ssh_login</option>
         <option value="successful_ssh_login">successful_ssh_login</option>
-        <option value="failed_sudo">failed_sudo</option>
         <option value="user_created">user_created</option>
         <option value="user_deleted">user_deleted</option>
         <option value="package_installed">package_installed</option>

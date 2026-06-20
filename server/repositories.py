@@ -83,15 +83,32 @@ def insert_alert(event_id, alert):
     conn.close()
 
 
-def get_dashboard_data():
+def get_dashboard_data(event_type="", severity="", hostname=""):
     conn = get_db()
+    event_query = "SELECT * FROM events WHERE 1=1"
+    event_params = []
+
+    if event_type:
+        event_query += " AND event_type = ?"
+        event_params.append(event_type)
+
+    if severity:
+        event_query += " AND LOWER(TRIM(severity)) = ?"
+        event_params.append(severity.strip().lower())
+
+    if hostname:
+        event_query += " AND hostname LIKE ?"
+        event_params.append(f"%{hostname}%")
+
+    filtered_event_ids_query = event_query.replace("SELECT *", "SELECT id")
+    alert_filter = f"event_id IN ({filtered_event_ids_query})"
     data = {
-        "total_events": conn.execute("SELECT COUNT(*) AS total FROM events").fetchone()["total"],
-        "total_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts").fetchone()["total"],
-        "high_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts WHERE LOWER(TRIM(severity)) = 'high'").fetchone()["total"],
-        "medium_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts WHERE LOWER(TRIM(severity)) = 'medium'").fetchone()["total"],
-        "latest_events": conn.execute("SELECT * FROM events ORDER BY id DESC LIMIT 10").fetchall(),
-        "latest_alerts": conn.execute("SELECT * FROM alerts ORDER BY id DESC LIMIT 10").fetchall(),
+        "total_events": conn.execute(event_query.replace("SELECT *", "SELECT COUNT(*) AS total"), event_params).fetchone()["total"],
+        "total_alerts": conn.execute(f"SELECT COUNT(*) AS total FROM alerts WHERE {alert_filter}", event_params).fetchone()["total"],
+        "high_alerts": conn.execute(f"SELECT COUNT(*) AS total FROM alerts WHERE LOWER(TRIM(severity)) = 'high' AND {alert_filter}", event_params).fetchone()["total"],
+        "medium_alerts": conn.execute(f"SELECT COUNT(*) AS total FROM alerts WHERE LOWER(TRIM(severity)) = 'medium' AND {alert_filter}", event_params).fetchone()["total"],
+        "latest_events": conn.execute(event_query + " ORDER BY id DESC LIMIT 10", event_params).fetchall(),
+        "latest_alerts": conn.execute(f"SELECT * FROM alerts WHERE {alert_filter} ORDER BY id DESC LIMIT 10", event_params).fetchall(),
     }
     conn.close()
     return data

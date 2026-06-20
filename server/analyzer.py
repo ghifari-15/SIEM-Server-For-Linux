@@ -1,8 +1,18 @@
 ALERT_RULES = {
+    "failed_ssh": {
+        "alert_type": "Failed SSH Login",
+        "severity": "medium",
+        "description": "Terdeteksi percobaan login SSH yang gagal.",
+    },
     "failed_ssh_login": {
         "alert_type": "Failed SSH Login",
         "severity": "medium",
         "description": "Terdeteksi percobaan login SSH yang gagal.",
+    },
+    "successful_ssh": {
+        "alert_type": "Successful SSH Login",
+        "severity": "low",
+        "description": "Terdeteksi login SSH yang berhasil.",
     },
     "successful_ssh_login": {
         "alert_type": "Successful SSH Login",
@@ -63,11 +73,47 @@ def analyze_event(event):
     message = event.get("message", "").strip()
     raw_log = event.get("raw_log", "")
 
+    if event_type == "user_account":
+        return [{
+            "alert_type": "User Account Event",
+            "severity": severity if severity in ("low", "medium", "high") else "medium",
+            "description": message or "Terdeteksi aktivitas akun user.",
+        }]
+
+    if event_type == "file_operation":
+        return [{
+            "alert_type": "File Operation",
+            "severity": severity if severity in ("low", "medium", "high") else "medium",
+            "description": message or "Terdeteksi aktivitas operasi file.",
+        }]
+
+    if event_type == "service_or_custom_log":
+        combined_log = f"{message} {raw_log}".upper()
+        if "STOP" in combined_log or "STOPPED" in combined_log or "FAILED" in combined_log:
+            return [{
+                "alert_type": "Service Stopped",
+                "severity": severity if severity in ("low", "medium", "high") else "high",
+                "description": message or "Terdeteksi service berhenti atau gagal.",
+            }]
+        if "START" in combined_log or "STARTED" in combined_log:
+            return [{
+                "alert_type": "Service Started",
+                "severity": severity if severity in ("low", "medium", "high") else "low",
+                "description": message or "Terdeteksi service berjalan.",
+            }]
+        if "ERROR" in combined_log or "WARNING" in combined_log:
+            return [{
+                "alert_type": "Custom Application Error",
+                "severity": severity if severity in ("low", "medium", "high") else "medium",
+                "description": "Terdeteksi ERROR/WARNING pada custom application log.",
+            }]
+        return []
+
     if event_type == "custom_app_log":
         if "ERROR" in raw_log.upper() or "WARNING" in raw_log.upper():
             return [{
                 "alert_type": "Custom Application Error",
-                "severity": "medium",
+                "severity": severity if severity in ("low", "medium", "high") else "medium",
                 "description": "Terdeteksi ERROR/WARNING pada custom application log.",
             }]
         return []

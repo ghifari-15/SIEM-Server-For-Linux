@@ -75,7 +75,10 @@ def receive_event():
 
 @main_bp.route("/dashboard")
 def dashboard():
-    data = get_dashboard_data()
+    event_type = request.args.get("event_type", "")
+    severity = request.args.get("severity", "")
+    hostname = request.args.get("hostname", "")
+    data = get_dashboard_data(event_type=event_type, severity=severity, hostname=hostname)
 
     formatted_events = []
     for row in data["latest_events"]:
@@ -93,7 +96,13 @@ def dashboard():
 
     data["latest_alerts"] = formatted_alerts
 
-    return render_template_string(DASHBOARD_TEMPLATE, **data)
+    return render_template_string(
+        DASHBOARD_TEMPLATE,
+        **data,
+        event_type=event_type,
+        severity=severity,
+        hostname=hostname,
+    )
 
 
 @main_bp.route("/events")
