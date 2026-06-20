@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .database import get_db
 
@@ -18,6 +18,29 @@ def insert_event(event):
     conn = get_db()
     cursor = conn.cursor()
 
+    existing = cursor.execute("""
+        SELECT id
+        FROM events
+        WHERE timestamp = ?
+          AND hostname = ?
+          AND source = ?
+          AND event_type = ?
+          AND message = ?
+          AND COALESCE(raw_log, '') = COALESCE(?, '')
+        LIMIT 1
+    """, (
+        event.get("timestamp"),
+        event.get("hostname"),
+        event.get("source"),
+        event.get("event_type"),
+        event.get("message"),
+        event.get("raw_log"),
+    )).fetchone()
+
+    if existing:
+        conn.close()
+        return existing["id"], False
+
     cursor.execute("""
         INSERT INTO events (
             timestamp, hostname, source, event_type, severity, message, raw_log
@@ -36,7 +59,7 @@ def insert_event(event):
     event_id = cursor.lastrowid
     conn.commit()
     conn.close()
-    return event_id
+    return event_id, True
 
 
 def insert_alert(event_id, alert):
@@ -50,7 +73,7 @@ def insert_alert(event_id, alert):
         VALUES (?, ?, ?, ?, ?)
     """, (
         event_id,
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        datetime.now(timezone.utc).isoformat(),
         alert["alert_type"],
         alert["severity"],
         alert["description"],
@@ -83,8 +106,8 @@ def get_events(event_type="", severity="", hostname=""):
         params.append(event_type)
 
     if severity:
-        query += " AND severity = ?"
-        params.append(severity)
+        query += " AND LOWER(TRIM(severity)) = ?"
+        params.append(severity.strip().lower())
 
     if hostname:
         query += " AND hostname LIKE ?"

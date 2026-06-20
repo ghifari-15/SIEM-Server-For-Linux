@@ -1,8 +1,7 @@
 import csv
 import io
 import os
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from datetime import datetime, timezone, timedelta
 
 from flask import Blueprint, Response, jsonify, render_template_string, request
 
@@ -21,13 +20,17 @@ from .templates import ALERTS_TEMPLATE, DASHBOARD_TEMPLATE, EVENTS_TEMPLATE
 
 
 main_bp = Blueprint("main", __name__)
+WIB = timezone(timedelta(hours=7))
+
 
 def format_timestamp(value):
     if not value:
         return "-"
     try:
         dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        local_dt = dt.astimezone(ZoneInfo("Asia/Jakarta"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        local_dt = dt.astimezone(WIB)
         return local_dt.strftime("%d-%m-%Y %H:%M:%S")
     except ValueError:
         return value
@@ -48,7 +51,15 @@ def receive_event():
         if field not in event:
             return jsonify({"status": "error", "message": f"Missing field: {field}"}), 400
 
-    event_id = insert_event(event)
+    event_id, created = insert_event(event)
+    if not created:
+        return jsonify({
+            "status": "duplicate",
+            "message": "Event already exists",
+            "event_id": event_id,
+            "alerts_generated": 0,
+        })
+
     alerts = analyze_event(event)
 
     for alert in alerts:
@@ -74,6 +85,14 @@ def dashboard():
 
     data["latest_events"] = formatted_events
 
+    formatted_alerts = []
+    for row in data["latest_alerts"]:
+        item = dict(row)
+        item["display_timestamp"] = format_timestamp(item["timestamp"])
+        formatted_alerts.append(item)
+
+    data["latest_alerts"] = formatted_alerts
+
     return render_template_string(DASHBOARD_TEMPLATE, **data)
 
 
@@ -95,7 +114,13 @@ def events():
 
 @main_bp.route("/alerts")
 def alerts():
-    return render_template_string(ALERTS_TEMPLATE, rows=get_alerts())
+    formatted_rows = []
+    for row in get_alerts():
+        item = dict(row)
+        item["display_timestamp"] = format_timestamp(item["timestamp"])
+        formatted_rows.append(item)
+
+    return render_template_string(ALERTS_TEMPLATE, rows=formatted_rows)
 
 
 @main_bp.route("/export/events")
