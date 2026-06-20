@@ -1,7 +1,8 @@
 import csv
 import io
 import os
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from flask import Blueprint, Response, jsonify, render_template_string, request
 
@@ -26,7 +27,8 @@ def format_timestamp(value):
         return "-"
     try:
         dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        return dt.strftime("%d-%m-%Y %H:%M:%S")
+        local_dt = dt.astimezone(ZoneInfo("Asia/Jakarta"))
+        return local_dt.strftime("%d-%m-%Y %H:%M:%S")
     except ValueError:
         return value
 
