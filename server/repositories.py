@@ -65,8 +65,8 @@ def get_dashboard_data():
     data = {
         "total_events": conn.execute("SELECT COUNT(*) AS total FROM events").fetchone()["total"],
         "total_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts").fetchone()["total"],
-        "high_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts WHERE severity = 'high'").fetchone()["total"],
-        "medium_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts WHERE severity = 'medium'").fetchone()["total"],
+        "high_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts WHERE LOWER(TRIM(severity)) = 'high'").fetchone()["total"],
+        "medium_alerts": conn.execute("SELECT COUNT(*) AS total FROM alerts WHERE LOWER(TRIM(severity)) = 'medium'").fetchone()["total"],
         "latest_events": conn.execute("SELECT * FROM events ORDER BY id DESC LIMIT 10").fetchall(),
         "latest_alerts": conn.execute("SELECT * FROM alerts ORDER BY id DESC LIMIT 10").fetchall(),
     }
@@ -117,9 +117,9 @@ def get_report_summary_data():
             ORDER BY total DESC
         """).fetchall(),
         "severity_summary": conn.execute("""
-            SELECT severity, COUNT(*) AS total
+            SELECT LOWER(TRIM(severity)) AS severity, COUNT(*) AS total
             FROM alerts
-            GROUP BY severity
+            GROUP BY LOWER(TRIM(severity))
             ORDER BY total DESC
         """).fetchall(),
     }
