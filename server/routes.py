@@ -1,7 +1,7 @@
 import csv
 import io
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import Blueprint, Response, jsonify, render_template_string, request
 
@@ -21,6 +21,14 @@ from .templates import ALERTS_TEMPLATE, DASHBOARD_TEMPLATE, EVENTS_TEMPLATE
 
 main_bp = Blueprint("main", __name__)
 
+def format_timestamp(value):
+    if not value:
+        return "-"
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return dt.strftime("%d-%m-%Y %H:%M:%S")
+    except ValueError:
+        return value
 
 @main_bp.route("/")
 def index():
@@ -54,7 +62,17 @@ def receive_event():
 
 @main_bp.route("/dashboard")
 def dashboard():
-    return render_template_string(DASHBOARD_TEMPLATE, **get_dashboard_data())
+    data = get_dashboard_data()
+
+    formatted_events = []
+    for row in data["latest_events"]:
+        item = dict(row)
+        item["display_timestamp"] = format_timestamp(item["timestamp"])
+        formatted_events.append(item)
+
+    data["latest_events"] = formatted_events
+
+    return render_template_string(DASHBOARD_TEMPLATE, **data)
 
 
 @main_bp.route("/events")
@@ -63,7 +81,14 @@ def events():
     severity = request.args.get("severity", "")
     hostname = request.args.get("hostname", "")
     rows = get_events(event_type=event_type, severity=severity, hostname=hostname)
-    return render_template_string(EVENTS_TEMPLATE, rows=rows, hostname=hostname)
+
+    formatted_rows = []
+    for row in rows:
+        item = dict(row)
+        item["display_timestamp"] = format_timestamp(item["timestamp"])
+        formatted_rows.append(item)
+
+    return render_template_string(EVENTS_TEMPLATE, rows=formatted_rows, hostname=hostname)
 
 
 @main_bp.route("/alerts")

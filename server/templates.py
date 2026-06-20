@@ -31,7 +31,7 @@ th { background: #222; color: white; }
 <table>
     <tr><th>ID</th><th>Timestamp</th><th>Hostname</th><th>Source</th><th>Event Type</th><th>Severity</th><th>Message</th></tr>
     {% for e in latest_events %}
-    <tr><td>{{ e.id }}</td><td>{{ e.timestamp }}</td><td>{{ e.hostname }}</td><td>{{ e.source }}</td><td>{{ e.event_type }}</td><td>{{ e.severity }}</td><td>{{ e.message }}</td></tr>
+    <tr><td>{{ e.id }}</td><td>{{ e.display_timestamp }}</td><td>{{ e.hostname }}</td><td>{{ e.source }}</td><td>{{ e.event_type }}</td><td>{{ e.severity }}</td><td>{{ e.message }}</td></tr>
     {% endfor %}
 </table>
 <h2>Latest Alerts</h2>
@@ -90,7 +90,7 @@ th { background: #222; color: white; }
 <table>
     <tr><th>ID</th><th>Timestamp</th><th>Hostname</th><th>Source</th><th>Event Type</th><th>Severity</th><th>Message</th><th>Raw Log</th></tr>
     {% for e in rows %}
-    <tr><td>{{ e.id }}</td><td>{{ e.timestamp }}</td><td>{{ e.hostname }}</td><td>{{ e.source }}</td><td>{{ e.event_type }}</td><td>{{ e.severity }}</td><td>{{ e.message }}</td><td>{{ e.raw_log }}</td></tr>
+    <tr><td>{{ e.id }}</td><td>{{ e.display_timestamp }}</td><td>{{ e.hostname }}</td><td>{{ e.source }}</td><td>{{ e.event_type }}</td><td>{{ e.severity }}</td><td>{{ e.message }}</td><td>{{ e.raw_log }}</td></tr>
     {% endfor %}
 </table>
 </body>
