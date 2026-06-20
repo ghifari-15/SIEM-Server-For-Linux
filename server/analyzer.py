@@ -58,7 +58,7 @@ ALERT_RULES = {
 
 
 def analyze_event(event):
-    event_type = event.get("event_type", "")
+    event_type = event.get("event_type", "").strip().lower()
     raw_log = event.get("raw_log", "")
 
     if event_type == "custom_app_log":
