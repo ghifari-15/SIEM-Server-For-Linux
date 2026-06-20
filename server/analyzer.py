@@ -59,6 +59,8 @@ ALERT_RULES = {
 
 def analyze_event(event):
     event_type = event.get("event_type", "").strip().lower()
+    severity = event.get("severity", "").strip().lower()
+    message = event.get("message", "").strip()
     raw_log = event.get("raw_log", "")
 
     if event_type == "custom_app_log":
@@ -71,4 +73,14 @@ def analyze_event(event):
         return []
 
     alert = ALERT_RULES.get(event_type)
-    return [alert] if alert else []
+    if alert:
+        return [alert]
+
+    if severity in ("medium", "high"):
+        return [{
+            "alert_type": "Security Event",
+            "severity": severity,
+            "description": message or f"Terdeteksi event dengan severity {severity}.",
+        }]
+
+    return []
