@@ -123,13 +123,22 @@ def events():
 
 @main_bp.route("/alerts")
 def alerts():
+    alert_type = request.args.get("alert_type", "")
+    severity = request.args.get("severity", "")
+    hostname = request.args.get("hostname", "")
     formatted_rows = []
-    for row in get_alerts():
+    for row in get_alerts(alert_type=alert_type, severity=severity, hostname=hostname):
         item = dict(row)
         item["display_timestamp"] = format_timestamp(item["timestamp"])
         formatted_rows.append(item)
 
-    return render_template_string(ALERTS_TEMPLATE, rows=formatted_rows)
+    return render_template_string(
+        ALERTS_TEMPLATE,
+        rows=formatted_rows,
+        alert_type=alert_type,
+        severity=severity,
+        hostname=hostname,
+    )
 
 
 @main_bp.route("/export/events")

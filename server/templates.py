@@ -130,6 +130,8 @@ ALERTS_TEMPLATE = """
 <head><title>SIEM Alerts</title><style>
 body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f4; }
 .nav a { margin-right: 15px; text-decoration: none; color: #0056b3; }
+form { background: white; padding: 15px; margin-bottom: 20px; }
+input, select, button { padding: 8px; margin-right: 8px; }
 table { width: 100%; border-collapse: collapse; background: white; }
 th, td { padding: 10px; border: 1px solid #ccc; font-size: 14px; }
 th { background: #222; color: white; }
@@ -138,6 +140,33 @@ th { background: #222; color: white; }
 <h1>Alerts</h1>
 <div class="nav"><a href="/dashboard">Dashboard</a><a href="/events">Events</a><a href="/alerts">Alerts</a></div>
 <hr>
+<form method="GET" action="/alerts">
+    <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
+    <select name="alert_type">
+        <option value="">All Alert Types</option>
+        <option value="Failed SSH Login" {% if alert_type == 'Failed SSH Login' %}selected{% endif %}>Failed SSH Login</option>
+        <option value="Successful SSH Login" {% if alert_type == 'Successful SSH Login' %}selected{% endif %}>Successful SSH Login</option>
+        <option value="Failed Sudo Attempt" {% if alert_type == 'Failed Sudo Attempt' %}selected{% endif %}>Failed Sudo Attempt</option>
+        <option value="User Account Created" {% if alert_type == 'User Account Created' %}selected{% endif %}>User Account Created</option>
+        <option value="User Account Deleted" {% if alert_type == 'User Account Deleted' %}selected{% endif %}>User Account Deleted</option>
+        <option value="Package Installed" {% if alert_type == 'Package Installed' %}selected{% endif %}>Package Installed</option>
+        <option value="Service Started" {% if alert_type == 'Service Started' %}selected{% endif %}>Service Started</option>
+        <option value="Service Stopped" {% if alert_type == 'Service Stopped' %}selected{% endif %}>Service Stopped</option>
+        <option value="File Created" {% if alert_type == 'File Created' %}selected{% endif %}>File Created</option>
+        <option value="File Modified" {% if alert_type == 'File Modified' %}selected{% endif %}>File Modified</option>
+        <option value="File Deleted" {% if alert_type == 'File Deleted' %}selected{% endif %}>File Deleted</option>
+        <option value="Custom Application Error" {% if alert_type == 'Custom Application Error' %}selected{% endif %}>Custom Application Error</option>
+        <option value="Security Event" {% if alert_type == 'Security Event' %}selected{% endif %}>Security Event</option>
+    </select>
+    <select name="severity">
+        <option value="">All Severity</option>
+        <option value="low" {% if severity == 'low' %}selected{% endif %}>low</option>
+        <option value="medium" {% if severity == 'medium' %}selected{% endif %}>medium</option>
+        <option value="high" {% if severity == 'high' %}selected{% endif %}>high</option>
+    </select>
+    <button type="submit">Filter</button>
+    <a href="/alerts">Reset</a>
+</form>
 <table>
     <tr><th>ID</th><th>Event ID</th><th>Timestamp</th><th>Alert Type</th><th>Severity</th><th>Description</th></tr>
     {% for a in rows %}

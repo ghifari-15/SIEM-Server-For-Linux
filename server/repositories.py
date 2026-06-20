@@ -138,9 +138,31 @@ def get_events(event_type="", severity="", hostname=""):
     return rows
 
 
-def get_alerts():
+def get_alerts(alert_type="", severity="", hostname=""):
+    query = """
+        SELECT alerts.*
+        FROM alerts
+        LEFT JOIN events ON events.id = alerts.event_id
+        WHERE 1=1
+    """
+    params = []
+
+    if alert_type:
+        query += " AND alerts.alert_type = ?"
+        params.append(alert_type)
+
+    if severity:
+        query += " AND LOWER(TRIM(alerts.severity)) = ?"
+        params.append(severity.strip().lower())
+
+    if hostname:
+        query += " AND events.hostname LIKE ?"
+        params.append(f"%{hostname}%")
+
+    query += " ORDER BY alerts.id DESC"
+
     conn = get_db()
-    rows = conn.execute("SELECT * FROM alerts ORDER BY id DESC").fetchall()
+    rows = conn.execute(query, params).fetchall()
     conn.close()
     return rows
 
