@@ -118,7 +118,13 @@ def events():
         item["display_timestamp"] = format_timestamp(item["timestamp"])
         formatted_rows.append(item)
 
-    return render_template_string(EVENTS_TEMPLATE, rows=formatted_rows, hostname=hostname)
+    return render_template_string(
+        EVENTS_TEMPLATE,
+        rows=formatted_rows,
+        event_type=event_type,
+        severity=severity,
+        hostname=hostname,
+    )
 
 
 @main_bp.route("/alerts")
@@ -197,7 +203,7 @@ def csv_response(csv_data, filename):
 
 def write_report(filename, content):
     os.makedirs(REPORT_DIR, exist_ok=True)
-    with open(os.path.join(REPORT_DIR, filename), "w") as f:
+    with open(os.path.join(REPORT_DIR, filename), "w", encoding="utf-8", newline="") as f:
         f.write(content)
 
 

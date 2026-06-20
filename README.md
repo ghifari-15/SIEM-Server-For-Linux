@@ -122,7 +122,7 @@ Rule engine saat ini mendukung tipe event berikut:
 | `file_created` | File Created | low |
 | `file_modified` | File Modified | medium |
 | `file_deleted` | File Deleted | medium |
-| `custom_app_log` dengan `ERROR` atau `WARNING` | Custom Application Error | medium |
+| `service_or_custom_log` dengan `ERROR`, `WARNING`, atau `FAILED` | Custom Application Error | medium |
 
 ## Desain Database
 

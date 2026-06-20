@@ -27,11 +27,17 @@ th { background: #222; color: white; }
     <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
     <select name="event_type">
         <option value="">All Event Types</option>
-        <option value="failed_ssh" {% if event_type == 'failed_ssh' %}selected{% endif %}>failed_ssh</option>
-        <option value="successful_ssh" {% if event_type == 'successful_ssh' %}selected{% endif %}>successful_ssh</option>
+        <option value="failed_ssh_login" {% if event_type == 'failed_ssh_login' %}selected{% endif %}>failed_ssh_login</option>
+        <option value="successful_ssh_login" {% if event_type == 'successful_ssh_login' %}selected{% endif %}>successful_ssh_login</option>
         <option value="failed_sudo" {% if event_type == 'failed_sudo' %}selected{% endif %}>failed_sudo</option>
-        <option value="user_account" {% if event_type == 'user_account' %}selected{% endif %}>user_account</option>
-        <option value="file_operation" {% if event_type == 'file_operation' %}selected{% endif %}>file_operation</option>
+        <option value="user_created" {% if event_type == 'user_created' %}selected{% endif %}>user_created</option>
+        <option value="user_deleted" {% if event_type == 'user_deleted' %}selected{% endif %}>user_deleted</option>
+        <option value="package_installed" {% if event_type == 'package_installed' %}selected{% endif %}>package_installed</option>
+        <option value="service_started" {% if event_type == 'service_started' %}selected{% endif %}>service_started</option>
+        <option value="service_stopped" {% if event_type == 'service_stopped' %}selected{% endif %}>service_stopped</option>
+        <option value="file_created" {% if event_type == 'file_created' %}selected{% endif %}>file_created</option>
+        <option value="file_modified" {% if event_type == 'file_modified' %}selected{% endif %}>file_modified</option>
+        <option value="file_deleted" {% if event_type == 'file_deleted' %}selected{% endif %}>file_deleted</option>
         <option value="service_or_custom_log" {% if event_type == 'service_or_custom_log' %}selected{% endif %}>service_or_custom_log</option>
     </select>
     <select name="severity">
@@ -87,29 +93,24 @@ th { background: #222; color: white; }
     <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
     <select name="event_type">
         <option value="">All Event Types</option>
-        <option value="failed_ssh">failed_ssh</option>
-        <option value="successful_ssh">successful_ssh</option>
-        <option value="failed_sudo">failed_sudo</option>
-        <option value="user_account">user_account</option>
-        <option value="file_operation">file_operation</option>
-        <option value="service_or_custom_log">service_or_custom_log</option>
-        <option value="failed_ssh_login">failed_ssh_login</option>
-        <option value="successful_ssh_login">successful_ssh_login</option>
-        <option value="user_created">user_created</option>
-        <option value="user_deleted">user_deleted</option>
-        <option value="package_installed">package_installed</option>
-        <option value="service_started">service_started</option>
-        <option value="service_stopped">service_stopped</option>
-        <option value="file_created">file_created</option>
-        <option value="file_modified">file_modified</option>
-        <option value="file_deleted">file_deleted</option>
-        <option value="custom_app_log">custom_app_log</option>
+        <option value="failed_ssh_login" {% if event_type == 'failed_ssh_login' %}selected{% endif %}>failed_ssh_login</option>
+        <option value="successful_ssh_login" {% if event_type == 'successful_ssh_login' %}selected{% endif %}>successful_ssh_login</option>
+        <option value="failed_sudo" {% if event_type == 'failed_sudo' %}selected{% endif %}>failed_sudo</option>
+        <option value="user_created" {% if event_type == 'user_created' %}selected{% endif %}>user_created</option>
+        <option value="user_deleted" {% if event_type == 'user_deleted' %}selected{% endif %}>user_deleted</option>
+        <option value="package_installed" {% if event_type == 'package_installed' %}selected{% endif %}>package_installed</option>
+        <option value="service_started" {% if event_type == 'service_started' %}selected{% endif %}>service_started</option>
+        <option value="service_stopped" {% if event_type == 'service_stopped' %}selected{% endif %}>service_stopped</option>
+        <option value="file_created" {% if event_type == 'file_created' %}selected{% endif %}>file_created</option>
+        <option value="file_modified" {% if event_type == 'file_modified' %}selected{% endif %}>file_modified</option>
+        <option value="file_deleted" {% if event_type == 'file_deleted' %}selected{% endif %}>file_deleted</option>
+        <option value="service_or_custom_log" {% if event_type == 'service_or_custom_log' %}selected{% endif %}>service_or_custom_log</option>
     </select>
     <select name="severity">
         <option value="">All Severity</option>
-        <option value="low">low</option>
-        <option value="medium">medium</option>
-        <option value="high">high</option>
+        <option value="low" {% if severity == 'low' %}selected{% endif %}>low</option>
+        <option value="medium" {% if severity == 'medium' %}selected{% endif %}>medium</option>
+        <option value="high" {% if severity == 'high' %}selected{% endif %}>high</option>
     </select>
     <button type="submit">Filter</button>
     <a href="/events">Reset</a>
@@ -156,7 +157,6 @@ th { background: #222; color: white; }
         <option value="File Modified" {% if alert_type == 'File Modified' %}selected{% endif %}>File Modified</option>
         <option value="File Deleted" {% if alert_type == 'File Deleted' %}selected{% endif %}>File Deleted</option>
         <option value="Custom Application Error" {% if alert_type == 'Custom Application Error' %}selected{% endif %}>Custom Application Error</option>
-        <option value="Security Event" {% if alert_type == 'Security Event' %}selected{% endif %}>Security Event</option>
     </select>
     <select name="severity">
         <option value="">All Severity</option>
