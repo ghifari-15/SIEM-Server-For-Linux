@@ -28,7 +28,7 @@ th { background: #222; color: white; }
     <div class="card"><h3>Medium Alerts</h3><h2>{{ medium_alerts }}</h2></div>
 </div>
 <h2>Latest Events</h2>
-<table>git
+<table>
     <tr><th>ID</th><th>Timestamp</th><th>Hostname</th><th>Source</th><th>Event Type</th><th>Severity</th><th>Message</th></tr>
     {% for e in latest_events %}
     <tr><td>{{ e.id }}</td><td>{{ e.display_timestamp }}</td><td>{{ e.hostname }}</td><td>{{ e.source }}</td><td>{{ e.event_type }}</td><td>{{ e.severity }}</td><td>{{ e.message }}</td></tr>
