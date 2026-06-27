@@ -8,3 +8,7 @@ REPORT_DIR = os.path.join(BASE_DIR, "reports")
 HOST = os.getenv("SIEM_HOST", "0.0.0.0")
 PORT = int(os.getenv("SIEM_PORT", "5000"))
 DEBUG = os.getenv("SIEM_DEBUG", "1") == "1"
+
+
+LLM_API_KEY=os.environ.get("DEEPINFRA_API_KEY", "")
+LLM_MODEL="XiaomiMiMo/MiMo-V2.5"

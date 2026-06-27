@@ -17,9 +17,10 @@ from .repositories import (
     insert_event,
 )
 from .templates import ALERTS_TEMPLATE, DASHBOARD_TEMPLATE, EVENTS_TEMPLATE
+from  humanize_query import run_humanize_log
 
 
-main_bp = Blueprint("main", __name__)
+app_bp = Blueprint("main", __name__)
 WIB = timezone(timedelta(hours=7))
 
 
@@ -35,12 +36,12 @@ def format_timestamp(value):
     except ValueError:
         return value
 
-@main_bp.route("/")
+@app_bp.route("/")
 def index():
     return dashboard()
 
 
-@main_bp.route("/api/events", methods=["POST"])
+@app_bp.route("/api/events", methods=["POST"])
 def receive_event():
     event = request.get_json()
 
@@ -73,7 +74,7 @@ def receive_event():
     })
 
 
-@main_bp.route("/dashboard")
+@app_bp.route("/dashboard")
 def dashboard():
     event_type = request.args.get("event_type", "")
     severity = request.args.get("severity", "")
@@ -105,7 +106,7 @@ def dashboard():
     )
 
 
-@main_bp.route("/events")
+@app_bp.route("/events")
 def events():
     event_type = request.args.get("event_type", "")
     severity = request.args.get("severity", "")
@@ -127,7 +128,7 @@ def events():
     )
 
 
-@main_bp.route("/alerts")
+@app_bp.route("/alerts")
 def alerts():
     alert_type = request.args.get("alert_type", "")
     severity = request.args.get("severity", "")
@@ -147,7 +148,7 @@ def alerts():
     )
 
 
-@main_bp.route("/export/events")
+@app_bp.route("/export/events")
 def export_events():
     rows = get_events()
     csv_data = build_csv(
@@ -158,7 +159,7 @@ def export_events():
     return csv_response(csv_data, "events.csv")
 
 
-@main_bp.route("/export/alerts")
+@app_bp.route("/export/alerts")
 def export_alerts():
     rows = get_alerts()
     csv_data = build_csv(
@@ -169,7 +170,7 @@ def export_alerts():
     return csv_response(csv_data, "alerts.csv")
 
 
-@main_bp.route("/report/summary")
+@app_bp.route("/report/summary")
 def report_summary():
     data = get_report_summary_data()
     report_text = build_report_summary(data)
@@ -181,6 +182,11 @@ def report_summary():
         headers={"Content-Disposition": "attachment; filename=report_summary.txt"},
     )
 
+
+@app_bp.route("/api/explain/<int:event_id>", methods=["GET"])
+def explain_event(event_id):
+    result = run_humanize_log(event_id)
+    return jsonify(result)
 
 def build_csv(rows, fields):
     output = io.StringIO()
@@ -229,3 +235,6 @@ def build_report_summary(data):
         lines.append(f"- {row['severity']}: {row['total']}")
 
     return "\n".join(lines)
+
+
+
