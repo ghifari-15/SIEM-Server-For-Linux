@@ -20,7 +20,7 @@
             <td>{{ e.severity }}</td>
             <td>{{ e.message }}</td>
             <td>{{ e.raw_log }}</td>
-            <td><a class="button-link" href="/events/{{ e.id }}/explain">AI Explain</a></td>
+            <td><a class="button-link" href="/api/events/{{ e.id }}/explain">Explain with AI</a></td>
         </tr>
     {% endfor %}
 </table>

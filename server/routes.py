@@ -189,13 +189,7 @@ def report_summary():
     )
 
 
-@app_bp.route("/api/<int:event_id>/explain", methods=["GET"])
-def explain_event(event_id):
-    result = run_humanize_log(event_id)
-    return jsonify(result)
-
-
-@app_bp.route("/events/<int:event_id>/explain", methods=["GET"])
+@app_bp.route("/api/events/<int:event_id>/explain", methods=["GET"])
 def explain_event_page(event_id):
     result = run_humanize_log(event_id)
     return render_template("event_explanation.html", result=result)

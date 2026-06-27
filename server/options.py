@@ -26,6 +26,7 @@ ALERT_TYPE_OPTIONS = [
     "File Modified",
     "File Deleted",
     "Custom Application Error",
+    "Security Event"
 ]
 
 SEVERITY_OPTIONS = [

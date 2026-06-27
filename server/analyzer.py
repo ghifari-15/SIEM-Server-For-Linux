@@ -54,6 +54,11 @@ ALERT_RULES = {
         "severity": "medium",
         "description": "Terdeteksi penghapusan file.",
     },
+    "service_or_custom_log": {
+        "alert_type": "Service and Custom Log",
+        "severity": "medium",
+        "description": "",
+    },
 }
 
 
