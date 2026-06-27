@@ -28,7 +28,10 @@ def build_csv(rows, fields):
     writer.writerow(fields)
 
     for row in rows:
-        writer.writerow([row[field] for field in fields])
+        values = []
+        for field in fields:
+            values.append(row[field])
+        writer.writerow(values)
 
     return output.getvalue()
 
