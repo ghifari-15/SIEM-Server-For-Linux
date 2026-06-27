@@ -188,7 +188,6 @@ def report_summary():
         headers={"Content-Disposition": "attachment; filename=report_summary.txt"},
     )
 
-
 @app_bp.route("/api/events/<int:event_id>/explain", methods=["GET"])
 def explain_event_page(event_id):
     result = run_humanize_log(event_id)
