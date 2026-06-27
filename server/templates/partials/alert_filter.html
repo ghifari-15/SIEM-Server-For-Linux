@@ -1,0 +1,14 @@
+<form method="GET" action="/alerts">
+    <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
+    <select name="alert_type">
+        <option value="">All Alert Types</option>
+        {% for option in alert_type_options %}
+            <option value="{{ option }}" {% if alert_type == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+    </select>
+    <select name="severity">
+        {% include "partials/severity_options.html" %}
+    </select>
+    <button type="submit">Filter</button>
+    <a href="/alerts">Reset</a>
+</form>

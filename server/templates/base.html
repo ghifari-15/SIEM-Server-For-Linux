@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}SIEM Dashboard{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f4; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #0056b3; }
+        .cards { display: flex; gap: 15px; margin-bottom: 25px; }
+        .card { background: white; padding: 20px; border-radius: 8px; min-width: 180px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        form { background: white; padding: 15px; margin-bottom: 20px; }
+        input, select, button { padding: 8px; margin-right: 8px; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 30px; }
+        th, td { padding: 10px; border: 1px solid #ccc; font-size: 14px; }
+        th { background: #222; color: white; }
+        .button-link { display: inline-block; padding: 6px 10px; background: #222; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; white-space: nowrap; }
+        .panel { background: white; padding: 20px; border-radius: 8px; max-width: 900px; }
+        .meta { color: #555; margin-bottom: 15px; }
+        .error { color: #b00020; }
+    </style>
+</head>
+<body>
+    <h1>{% block heading %}SIEM Dashboard{% endblock %}</h1>
+    {% include "partials/nav.html" %}
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>

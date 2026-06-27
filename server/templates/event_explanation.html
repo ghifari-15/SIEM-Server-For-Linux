@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}AI Event Explanation{% endblock %}
+{% block heading %}AI Event Explanation{% endblock %}
+
+{% block content %}
+<div class="panel">
+    {% if result.error %}
+        <p class="error">{{ result.error }}</p>
+    {% else %}
+        <div class="meta">
+            <strong>Event ID:</strong> {{ result.event_id }}<br>
+            <strong>Event Type:</strong> {{ result.event_type }}<br>
+            <strong>Severity:</strong> {{ result.severity }}
+        </div>
+        <p>{{ result.explanation }}</p>
+    {% endif %}
+
+    <a class="button-link" href="/events">Back to Events</a>
+</div>
+{% endblock %}

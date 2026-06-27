@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}SIEM Events{% endblock %}
+{% block heading %}Events{% endblock %}
+
+{% block content %}
+{% with action="/events" %}
+    {% include "partials/event_filter.html" %}
+{% endwith %}
+
+<table>
+    <tr><th>ID</th><th>Timestamp</th><th>Hostname</th><th>Source</th><th>Event Type</th><th>Severity</th><th>Message</th><th>Raw Log</th><th>Action</th></tr>
+    {% for e in rows %}
+        <tr>
+            <td>{{ e.id }}</td>
+            <td>{{ e.display_timestamp }}</td>
+            <td>{{ e.hostname }}</td>
+            <td>{{ e.source }}</td>
+            <td>{{ e.event_type }}</td>
+            <td>{{ e.severity }}</td>
+            <td>{{ e.message }}</td>
+            <td>{{ e.raw_log }}</td>
+            <td><a class="button-link" href="/events/{{ e.id }}/explain">AI Explain</a></td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -3,7 +3,7 @@ import io
 import os
 from datetime import datetime, timezone, timedelta
 
-from flask import Blueprint, Response, jsonify, render_template_string, request
+from flask import Blueprint, Response, jsonify, render_template, request
 
 from .analyzer import analyze_event
 from .config import REPORT_DIR
@@ -16,8 +16,8 @@ from .repositories import (
     insert_alert,
     insert_event,
 )
-from .templates import ALERTS_TEMPLATE, DASHBOARD_TEMPLATE, EVENTS_TEMPLATE
-from  humanize_query import run_humanize_log
+from .options import ALERT_TYPE_OPTIONS, EVENT_TYPE_OPTIONS, SEVERITY_OPTIONS
+from .humanize_query import run_humanize_log
 
 
 app_bp = Blueprint("main", __name__)
@@ -97,12 +97,14 @@ def dashboard():
 
     data["latest_alerts"] = formatted_alerts
 
-    return render_template_string(
-        DASHBOARD_TEMPLATE,
+    return render_template(
+        "dashboard.html",
         **data,
         event_type=event_type,
         severity=severity,
         hostname=hostname,
+        event_type_options=EVENT_TYPE_OPTIONS,
+        severity_options=SEVERITY_OPTIONS,
     )
 
 
@@ -119,12 +121,14 @@ def events():
         item["display_timestamp"] = format_timestamp(item["timestamp"])
         formatted_rows.append(item)
 
-    return render_template_string(
-        EVENTS_TEMPLATE,
+    return render_template(
+        "events.html",
         rows=formatted_rows,
         event_type=event_type,
         severity=severity,
         hostname=hostname,
+        event_type_options=EVENT_TYPE_OPTIONS,
+        severity_options=SEVERITY_OPTIONS,
     )
 
 
@@ -139,12 +143,14 @@ def alerts():
         item["display_timestamp"] = format_timestamp(item["timestamp"])
         formatted_rows.append(item)
 
-    return render_template_string(
-        ALERTS_TEMPLATE,
+    return render_template(
+        "alerts.html",
         rows=formatted_rows,
         alert_type=alert_type,
         severity=severity,
         hostname=hostname,
+        alert_type_options=ALERT_TYPE_OPTIONS,
+        severity_options=SEVERITY_OPTIONS,
     )
 
 
@@ -183,10 +189,16 @@ def report_summary():
     )
 
 
-@app_bp.route("/api/explain/<int:event_id>", methods=["GET"])
+@app_bp.route("/api/<int:event_id>/explain", methods=["GET"])
 def explain_event(event_id):
     result = run_humanize_log(event_id)
     return jsonify(result)
+
+
+@app_bp.route("/events/<int:event_id>/explain", methods=["GET"])
+def explain_event_page(event_id):
+    result = run_humanize_log(event_id)
+    return render_template("event_explanation.html", result=result)
 
 def build_csv(rows, fields):
     output = io.StringIO()
@@ -235,6 +247,3 @@ def build_report_summary(data):
         lines.append(f"- {row['severity']}: {row['total']}")
 
     return "\n".join(lines)
-
-
-

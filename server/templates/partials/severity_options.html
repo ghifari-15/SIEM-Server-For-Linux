@@ -1,0 +1,4 @@
+<option value="">All Severity</option>
+{% for option in severity_options %}
+    <option value="{{ option }}" {% if severity == option %}selected{% endif %}>{{ option }}</option>
+{% endfor %}

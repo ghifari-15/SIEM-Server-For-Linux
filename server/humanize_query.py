@@ -39,11 +39,11 @@ def humanize_log(raw_log: str, event_type: str = "", severity: str = "", message
 
     Jelaskan log ini dalam Bahasa Indonesia yang mudah dipahami oleh orang yang tidak paham teknis.
     Gunakan analogi sehari-hari jika perlu.
-    Sampaikan juga apakah ini berbahaya atau tidak, dan apa yang sebaiknya dilakukan admin. 
+    Sampaikan juga apakah ini berbahaya atau tidak, dan apa yang sebaiknya dilakukan admin.  
 
  
     NOTE: 
-    - JANGAN GUNAKAN PENJELASAN DENGAN FORMAT LAIN, JELASKAN DI DALAM 1 PARAGRAF DENGAN SINGKAT, JELAS, DAN PADAT. 
+    - JANGAN GUNAKAN PENJELASAN DENGAN FORMAT LAIN, JELASKAN DI DALAM 1 PARAGRAF DENGAN SINGKAT, JELAS, DAN PADAT TANPA BERTELE-TELE (Maks 50 kata). 
     - Jangan gunakan Special Character 
     """
 
@@ -52,25 +52,29 @@ def humanize_log(raw_log: str, event_type: str = "", severity: str = "", message
         )
     return response.choices[0].message.content
 
-def run_humanize_log(event_id: str) -> dict:
+def run_humanize_log(event_id: int) -> dict:
     try:
-       
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-    
         cursor.execute("""
-                SELECT e.event_type, e.severity, e.message, e.raw_log,
-                    a.alert_type, a.description
-                FROM events e
-                LEFT JOIN alerts a ON a.event_id = e.id
-                WHERE e.id = ?
-            """, (event_id,))
+            SELECT
+                e.id,
+                e.event_type,
+                e.severity,
+                e.message,
+                e.raw_log,
+                a.alert_type,
+                a.description AS alert_description
+            FROM events e
+            LEFT JOIN alerts a ON a.event_id = e.id
+            WHERE e.id = ?
+        """, (event_id,))
 
         row = cursor.fetchone()
         if not row:
-                return {"error": f"Event dengan ID {event_id} tidak ditemukan."}
+            return {"error": f"Event dengan ID {event_id} tidak ditemukan."}
         
         explanation = humanize_log(
             raw_log=row["raw_log"] or "",
@@ -80,14 +84,18 @@ def run_humanize_log(event_id: str) -> dict:
         )
 
         return {
-            "event_id": event_id,
+            "event_id": row["id"],
             "event_type": row["event_type"],
             "severity": row["severity"],
+            "alert_type": row["alert_type"],
+            "alert_description": row["alert_description"],
             "explanation": explanation
         }
 
     except Exception as e:
         return {"error": str(e)}
-
+    finally:
+        if "conn" in locals():
+            conn.close()
 
 

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}SIEM Alerts{% endblock %}
+{% block heading %}Alerts{% endblock %}
+
+{% block content %}
+{% include "partials/alert_filter.html" %}
+
+<table>
+    <tr><th>ID</th><th>Event ID</th><th>Timestamp</th><th>Alert Type</th><th>Severity</th><th>Description</th></tr>
+    {% for a in rows %}
+        <tr><td>{{ a.id }}</td><td>{{ a.event_id }}</td><td>{{ a.display_timestamp }}</td><td>{{ a.alert_type }}</td><td>{{ a.severity }}</td><td>{{ a.description }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

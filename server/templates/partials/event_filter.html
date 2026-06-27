@@ -1,0 +1,14 @@
+<form method="GET" action="{{ action }}">
+    <input type="text" name="hostname" placeholder="hostname" value="{{ hostname }}">
+    <select name="event_type">
+        <option value="">All Event Types</option>
+        {% for option in event_type_options %}
+            <option value="{{ option }}" {% if event_type == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+    </select>
+    <select name="severity">
+        {% include "partials/severity_options.html" %}
+    </select>
+    <button type="submit">Filter</button>
+    <a href="{{ action }}">Reset</a>
+</form>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}SIEM Dashboard{% endblock %}
+{% block heading %}SIEM Dashboard{% endblock %}
+
+{% block content %}
+{% with action="/dashboard" %}
+    {% include "partials/event_filter.html" %}
+{% endwith %}
+
+<div class="cards">
+    <div class="card"><h3>Total Events</h3><h2>{{ total_events }}</h2></div>
+    <div class="card"><h3>Total Alerts</h3><h2>{{ total_alerts }}</h2></div>
+    <div class="card"><h3>High Alerts</h3><h2>{{ high_alerts }}</h2></div>
+    <div class="card"><h3>Medium Alerts</h3><h2>{{ medium_alerts }}</h2></div>
+</div>
+
+<h2>Latest Events</h2>
+<table>
+    <tr><th>ID</th><th>Timestamp</th><th>Hostname</th><th>Source</th><th>Event Type</th><th>Severity</th><th>Message</th></tr>
+    {% for e in latest_events %}
+        <tr><td>{{ e.id }}</td><td>{{ e.display_timestamp }}</td><td>{{ e.hostname }}</td><td>{{ e.source }}</td><td>{{ e.event_type }}</td><td>{{ e.severity }}</td><td>{{ e.message }}</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Latest Alerts</h2>
+<table>
+    <tr><th>ID</th><th>Event ID</th><th>Timestamp</th><th>Alert Type</th><th>Severity</th><th>Description</th></tr>
+    {% for a in latest_alerts %}
+        <tr><td>{{ a.id }}</td><td>{{ a.event_id }}</td><td>{{ a.display_timestamp }}</td><td>{{ a.alert_type }}</td><td>{{ a.severity }}</td><td>{{ a.description }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

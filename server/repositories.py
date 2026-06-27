@@ -40,6 +40,7 @@ def insert_event(event):
     if existing:
         conn.close()
         return existing["id"], False
+    
 
     cursor.execute("""
         INSERT INTO events (
